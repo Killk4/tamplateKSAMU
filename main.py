@@ -34,37 +34,44 @@ elemet_parameters = ['list_of_values', 'obiazatpole', 'user_tree_element_name']
 with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as file:
     
     i = 1
-    lin = 0
-    elist = 0
+    lin = 1
+    elist = 1
+    val_exist = 1
     count = 0
     type_nn = 0
 
     for line in file:
+
         res = re.match(r'.*<Elem.* P', line)
         if res is not None:
             print(f'{i}: {res.group(0)}')
             count = count + 1
             type_nn = re.search(r'TYP="[0-9]*"', line).group(0)[5:-1]
         if int(type_nn) != 0:
+            
             res = re.search(r'listofvalues=".*', line)
             if res is not None:
+                val_exist = 0
 
-                list_is_none = re.search(r'listofvalues=""', line)
-                if list_is_none is None:
-                    lin = 0
-                else:
-                    lin = 1
-                    type_nn = 0
+            list_is_none = re.search(r'listofvalues=""', line)
+            if list_is_none is None:
+                lin = 0
+            else:
+                lin = 1
+                type_nn = 0
 
-                end_list = re.search(r'".*height', line)
-                if end_list is not None:
-                    elist = 1
-                    type_nn = 0
-                else:
-                    elist = 0
+            end_list = re.search(r'".*height', line) # тут нихуя не работает почему-то блять
+            if end_list is not None:
+                elist = 1
+                type_nn = 0
+                val_exist = 1
+            else:
+                elist = 0
                 
-            if lin == 0 and elist == 0:
-                print(line)
+            if lin == 0 and elist == 0 and val_exist == 0:
+                with open('log.txt', 'a', encoding='utf8') as file:
+                    file.write(line)
+                    print(line)
             
 
         i = i+1
