@@ -31,6 +31,12 @@ elemet_types = {0 : 'папка (группа)',
 
 elemet_parameters = ['list_of_values', 'obiazatpole', 'user_tree_element_name']
 
+def log(text:str)-> bool:
+    with open('log.txt', 'a', encoding='utf8') as file:
+        file.write(text)
+        print(text)
+            
+
 with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as file:
     
     i = 1
@@ -44,13 +50,17 @@ with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as
 
         res = re.match(r'.*<Elem.* P', line)
         if res is not None:
-            print(f'{i}: {res.group(0)}')
             count = count + 1
             type_nn = re.search(r'TYP="[0-9]*"', line).group(0)[5:-1]
         if int(type_nn) != 0:
-            
+            full_field_name = re.search(r'nadpis_text=".*".*nadpis', line)
+            if full_field_name is not None:
+                field_name = re.search(r'".*"', full_field_name.group(0))
+                log(f'\nНазвание поля -> {field_name.group(0)[1:-21]}\n')
+
             res = re.search(r'listofvalues=".*', line)
             if res is not None:
+                line = re.search(r's=".*', res.group(0)).group(0)[3:]
                 val_exist = 0
 
             list_is_none = re.search(r'listofvalues=""', line)
@@ -69,10 +79,7 @@ with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as
                 elist = 0
                 
             if lin == 0 and elist == 0 and val_exist == 0:
-                with open('log.txt', 'a', encoding='utf8') as file:
-                    file.write(line)
-                    print(line)
-            
+                log(line)
 
         i = i+1
         sleep(.005)
