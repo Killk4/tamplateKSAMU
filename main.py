@@ -36,7 +36,7 @@ def log(text:str)-> bool:
         file.write(text)
         print(text)
             
-
+0
 with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as file:
     
     i = 1
@@ -53,10 +53,13 @@ with open('530н Первичный осмотр.xml', 'r', encoding='utf-8') as
             count = count + 1
             type_nn = re.search(r'TYP="[0-9]*"', line).group(0)[5:-1]
         if int(type_nn) != 0:
+
+            # is_required = re.search('obiazatpole')
+
             full_field_name = re.search(r'nadpis_text=".*".*nadpis', line)
             if full_field_name is not None:
                 field_name = re.search(r'".*"', full_field_name.group(0))
-                log(f'\nНазвание поля -> {field_name.group(0)[1:-21]}\n')
+                log(f'\nНазвание поля ({elemet_types[int(type_nn)]}) -> {field_name.group(0)[1:-21]}\n')
 
             res = re.search(r'listofvalues=".*', line)
             if res is not None:
